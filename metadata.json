@@ -1,0 +1,6 @@
+{
+  "name": "포인트 뽑기 - POINT DRAW",
+  "description": "귀여운 8비트 레트로 게임 스타일의 행운의 포인트 뽑기 웹 앱! 50개 티켓의 실시간 뽑기 및 당첨 결과",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

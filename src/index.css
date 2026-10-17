@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-pastel-pink: #FFCCD9;
+    --color-pastel-cream: #FFFDF7;
+    --color-pastel-yellow: #FEF3C7;
+    --color-pastel-mint: #BAF2DF;
+    --color-retro-ink: #262438;
+    --color-retro-shadow: #191826;
+  }
+
+  body {
+    font-family: 'NeoDunggeunmo', 'Press Start 2P', system-ui, -apple-system, sans-serif;
+    background-color: #FFFDF7;
+    color: #262438;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    image-rendering: pixelated;
+  }
+}
+
+/* 8-bit Pixel Border System */
+.pixel-box {
+  background-color: #FFFFFF;
+  border: 3px solid #262438;
+  box-shadow: 4px 4px 0 #262438;
+  position: relative;
+}
+
+.pixel-box-sm {
+  border: 2px solid #262438;
+  box-shadow: 3px 3px 0 #262438;
+}
+
+.pixel-box-pink {
+  background-color: #FFF0F4;
+  border: 3px solid #262438;
+  box-shadow: 4px 4px 0 #262438;
+}
+
+.pixel-box-yellow {
+  background-color: #FEF9C3;
+  border: 3px solid #262438;
+  box-shadow: 4px 4px 0 #262438;
+}
+
+.pixel-box-mint {
+  background-color: #E6FAF4;
+  border: 3px solid #262438;
+  box-shadow: 4px 4px 0 #262438;
+}
+
+/* 8-bit Retro Button with Press Down Effect */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #262438;
+  box-shadow: 0 4px 0 #1B1926;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  user-select: none;
+}
+
+.pixel-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #1B1926;
+}
+
+.pixel-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #1B1926;
+}
+
+.pixel-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 3px 0 #1B1926;
+}
+
+/* Special Big Draw Button */
+.pixel-draw-btn {
+  background: linear-gradient(180deg, #FF94B8 0%, #FF5A8D 100%);
+  color: #FFFFFF;
+  border: 4px solid #262438;
+  box-shadow: 0 6px 0 #9E1F47, 0 10px 0 #262438;
+  text-shadow: 2px 2px 0 #831839;
+  letter-spacing: 0.05em;
+  transition: all 0.08s ease;
+}
+
+.pixel-draw-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #9E1F47, 0 12px 0 #262438;
+  background: linear-gradient(180deg, #FFA5C4 0%, #FF6898 100%);
+}
+
+.pixel-draw-btn:active:not(:disabled) {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #9E1F47, 0 4px 0 #262438;
+}
+
+/* Pixel Shake Animation during draw */
+@keyframes pixelShake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-3px, 2px) rotate(-1deg); }
+  40% { transform: translate(3px, -2px) rotate(1deg); }
+  60% { transform: translate(-4px, -1px) rotate(-1.5deg); }
+  80% { transform: translate(4px, 1px) rotate(1.5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.animate-pixel-shake {
+  animation: pixelShake 0.15s infinite;
+}
+
+/* Pixel Bounce */
+@keyframes pixelBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-pixel-bounce {
+  animation: pixelBounce 1.4s ease-in-out infinite;
+}
+
+/* Pixel Float for decorative items */
+@keyframes pixelFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+.animate-pixel-float {
+  animation: pixelFloat 2.6s ease-in-out infinite;
+}
+
+/* Subtle Blink for arcade lights */
+@keyframes pixelBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
+.animate-pixel-blink {
+  animation: pixelBlink 0.7s step-end infinite;
+}
+
+/* Custom Scrollbar for Retro feel */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF8EB;
+  border: 2px solid #262438;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFCCD9;
+  border: 2px solid #262438;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFB3C6;
+}

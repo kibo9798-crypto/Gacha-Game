@@ -2,53 +2,72 @@
 
 @layer base {
   :root {
-    --color-pastel-pink: #FFCCD9;
-    --color-pastel-cream: #FFFDF7;
-    --color-pastel-yellow: #FEF3C7;
-    --color-pastel-mint: #BAF2DF;
-    --color-retro-ink: #262438;
-    --color-retro-shadow: #191826;
+    --color-mint-canvas: #E6F7F2;
+    --color-mint-subtle: #F0FDF9;
+    --color-mint-card: #CCFBF1;
+    --color-mint-primary: #14B8A6;
+    --color-mint-dark: #0D9488;
+    --color-mint-deep: #134E48;
+    --color-retro-ink: #134E48;
+    --color-retro-shadow: #0F3E3A;
   }
 
   body {
     font-family: 'NeoDunggeunmo', 'Press Start 2P', system-ui, -apple-system, sans-serif;
-    background-color: #FFFDF7;
-    color: #262438;
+    background-color: #E6F7F2;
+    color: #134E48;
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: grayscale;
     image-rendering: pixelated;
   }
 }
 
-/* 8-bit Pixel Border System */
+/* 8-bit Dot-Matrix Pattern Background */
+.retro-dot-bg {
+  background-color: #E6F7F2;
+  background-image: 
+    radial-gradient(#2DD4BF 2px, transparent 2px),
+    radial-gradient(#99F6E4 1.5px, #E6F7F2 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* Secondary pixel dot grid texture */
+.pixel-grid-overlay {
+  background-image: linear-gradient(to right, rgba(19, 78, 72, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(19, 78, 72, 0.05) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* 8-bit Pixel Border System with Deep Mint Retro Ink */
 .pixel-box {
   background-color: #FFFFFF;
-  border: 3px solid #262438;
-  box-shadow: 4px 4px 0 #262438;
+  border: 3px solid #134E48;
+  box-shadow: 4px 4px 0 #134E48;
   position: relative;
 }
 
 .pixel-box-sm {
-  border: 2px solid #262438;
-  box-shadow: 3px 3px 0 #262438;
+  border: 2px solid #134E48;
+  box-shadow: 3px 3px 0 #134E48;
 }
 
-.pixel-box-pink {
-  background-color: #FFF0F4;
-  border: 3px solid #262438;
-  box-shadow: 4px 4px 0 #262438;
+.pixel-box-mint {
+  background-color: #F0FDF9;
+  border: 3px solid #134E48;
+  box-shadow: 4px 4px 0 #134E48;
+}
+
+.pixel-box-mint-accent {
+  background-color: #CCFBF1;
+  border: 3px solid #134E48;
+  box-shadow: 4px 4px 0 #134E48;
 }
 
 .pixel-box-yellow {
   background-color: #FEF9C3;
-  border: 3px solid #262438;
-  box-shadow: 4px 4px 0 #262438;
-}
-
-.pixel-box-mint {
-  background-color: #E6FAF4;
-  border: 3px solid #262438;
-  box-shadow: 4px 4px 0 #262438;
+  border: 3px solid #134E48;
+  box-shadow: 4px 4px 0 #134E48;
 }
 
 /* 8-bit Retro Button with Press Down Effect */
@@ -56,8 +75,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #262438;
-  box-shadow: 0 4px 0 #1B1926;
+  border: 3px solid #134E48;
+  box-shadow: 0 4px 0 #0F3E3A;
   font-family: inherit;
   font-weight: bold;
   cursor: pointer;
@@ -67,41 +86,41 @@
 
 .pixel-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 0 #1B1926;
+  box-shadow: 0 6px 0 #0F3E3A;
 }
 
 .pixel-btn:active:not(:disabled) {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #1B1926;
+  box-shadow: 0 0 0 #0F3E3A;
 }
 
 .pixel-btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 0 3px 0 #1B1926;
+  box-shadow: 0 3px 0 #0F3E3A;
 }
 
-/* Special Big Draw Button */
+/* Special Big Draw Button - Mint & Emerald Arcade Theme */
 .pixel-draw-btn {
-  background: linear-gradient(180deg, #FF94B8 0%, #FF5A8D 100%);
+  background: linear-gradient(180deg, #2DD4BF 0%, #0D9488 100%);
   color: #FFFFFF;
-  border: 4px solid #262438;
-  box-shadow: 0 6px 0 #9E1F47, 0 10px 0 #262438;
-  text-shadow: 2px 2px 0 #831839;
+  border: 4px solid #134E48;
+  box-shadow: 0 6px 0 #064E3B, 0 10px 0 #134E48;
+  text-shadow: 2px 2px 0 #064E3B;
   letter-spacing: 0.05em;
   transition: all 0.08s ease;
 }
 
 .pixel-draw-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 #9E1F47, 0 12px 0 #262438;
-  background: linear-gradient(180deg, #FFA5C4 0%, #FF6898 100%);
+  box-shadow: 0 8px 0 #064E3B, 0 12px 0 #134E48;
+  background: linear-gradient(180deg, #5EEAD4 0%, #0F766E 100%);
 }
 
 .pixel-draw-btn:active:not(:disabled) {
   transform: translateY(6px);
-  box-shadow: 0 0 0 #9E1F47, 0 4px 0 #262438;
+  box-shadow: 0 0 0 #064E3B, 0 4px 0 #134E48;
 }
 
 /* Pixel Shake Animation during draw */
@@ -148,22 +167,22 @@
   animation: pixelBlink 0.7s step-end infinite;
 }
 
-/* Custom Scrollbar for Retro feel */
+/* Custom Scrollbar for Mint Retro feel */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFF8EB;
-  border: 2px solid #262438;
+  background: #E6F7F2;
+  border: 2px solid #134E48;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFCCD9;
-  border: 2px solid #262438;
+  background: #99F6E4;
+  border: 2px solid #134E48;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFB3C6;
+  background: #5EEAD4;
 }

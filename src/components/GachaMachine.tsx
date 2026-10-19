@@ -1,201 +1,315 @@
 import React, { useState, useEffect } from 'react';
-import { PixelCoin, PixelHeart, PixelStar } from './PixelIcons';
+import { PixelClover, PixelCoin, PixelStar, PixelCrankDial } from './PixelIcons';
+import { PixelCapsule } from './PixelCapsule';
 import { sound } from '../utils/audio';
 
 interface GachaMachineProps {
   isDrawing: boolean;
   onDraw: () => void;
   disabled?: boolean;
+  totalCount?: number;
 }
 
-interface CapsuleBall {
+type CapsuleColor = 'mint' | 'yellow' | 'pink' | 'blue' | 'purple' | 'orange' | 'red';
+
+interface CapsuleState {
   id: number;
-  color: string;
+  color: CapsuleColor;
   x: number;
   y: number;
   size: number;
+  rotation: number;
 }
 
-const BALL_COLORS = ['#FF8DA1', '#FDE047', '#6EE7B7', '#93C5FD', '#C084FC', '#FDBA74'];
+export const GachaMachine: React.FC<GachaMachineProps> = ({
+  isDrawing,
+  onDraw,
+  disabled = false,
+  totalCount = 0,
+}) => {
+  // 회전 크랭크 레버 각도
+  const [handleAngle, setHandleAngle] = useState(0);
 
-export const GachaMachine: React.FC<GachaMachineProps> = ({ isDrawing, onDraw, disabled = false }) => {
-  // 캡슐 볼들의 위치 상태 (회전 시 튕기는 효과)
-  const [balls, setBalls] = useState<CapsuleBall[]>(() => [
-    { id: 1, color: '#FF8DA1', x: 22, y: 65, size: 28 },
-    { id: 2, color: '#FDE047', x: 50, y: 70, size: 26 },
-    { id: 3, color: '#6EE7B7', x: 74, y: 62, size: 28 },
-    { id: 4, color: '#93C5FD', x: 35, y: 45, size: 26 },
-    { id: 5, color: '#C084FC', x: 62, y: 42, size: 27 },
-    { id: 6, color: '#FDBA74', x: 48, y: 25, size: 25 },
-    { id: 7, color: '#FF8DA1', x: 20, y: 35, size: 24 },
-    { id: 8, color: '#FDE047', x: 78, y: 38, size: 25 },
+  // 배출구로 굴러나온 캡슐 상태
+  const [droppedCapsuleColor, setDroppedCapsuleColor] = useState<CapsuleColor | null>(null);
+
+  // 챔버 내부의 정교한 8비트 캡슐통들
+  const [capsules, setCapsules] = useState<CapsuleState[]>(() => [
+    { id: 1, color: 'mint', x: 26, y: 72, size: 36, rotation: -15 },
+    { id: 2, color: 'yellow', x: 50, y: 76, size: 36, rotation: 10 },
+    { id: 3, color: 'blue', x: 74, y: 70, size: 36, rotation: 25 },
+    { id: 4, color: 'pink', x: 38, y: 52, size: 36, rotation: -35 },
+    { id: 5, color: 'purple', x: 62, y: 50, size: 36, rotation: 18 },
+    { id: 6, color: 'orange', x: 50, y: 32, size: 36, rotation: -12 },
+    { id: 7, color: 'red', x: 22, y: 40, size: 36, rotation: 40 },
+    { id: 8, color: 'mint', x: 78, y: 44, size: 36, rotation: -25 },
+    { id: 9, color: 'yellow', x: 32, y: 24, size: 34, rotation: 15 },
+    { id: 10, color: 'blue', x: 68, y: 26, size: 34, rotation: -20 },
   ]);
 
-  // 뽑기 진행 시 볼들이 마구 튀어 오르는 효과
+  // 뽑기 진행 시 볼들이 마구 튀어 오르고 크랭크가 360도 연속 회전
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let ballInterval: NodeJS.Timeout | null = null;
+    let handleInterval: NodeJS.Timeout | null = null;
+
     if (isDrawing) {
-      interval = setInterval(() => {
-        setBalls((prev) =>
-          prev.map((ball) => ({
-            ...ball,
-            x: Math.max(15, Math.min(80, ball.x + (Math.random() * 30 - 15))),
-            y: Math.max(20, Math.min(75, ball.y + (Math.random() * 30 - 15))),
-            color: BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)],
+      setDroppedCapsuleColor(null);
+
+      // 크랭크 핸들 고속 회전
+      handleInterval = setInterval(() => {
+        setHandleAngle((prev) => (prev + 36) % 360);
+      }, 40);
+
+      // 캡슐통 요동치는 물리 연출
+      ballInterval = setInterval(() => {
+        setCapsules((prev) =>
+          prev.map((c) => ({
+            ...c,
+            x: Math.max(16, Math.min(84, c.x + (Math.random() * 32 - 16))),
+            y: Math.max(20, Math.min(80, c.y + (Math.random() * 32 - 16))),
+            rotation: (c.rotation + 30) % 360,
           }))
         );
-      }, 90);
+      }, 65);
     } else {
-      // 기본 위치로 복귀
-      setBalls([
-        { id: 1, color: '#FF8DA1', x: 22, y: 65, size: 28 },
-        { id: 2, color: '#FDE047', x: 50, y: 70, size: 26 },
-        { id: 3, color: '#6EE7B7', x: 74, y: 62, size: 28 },
-        { id: 4, color: '#93C5FD', x: 35, y: 45, size: 26 },
-        { id: 5, color: '#C084FC', x: 62, y: 42, size: 27 },
-        { id: 6, color: '#FDBA74', x: 48, y: 25, size: 25 },
-        { id: 7, color: '#FF8DA1', x: 20, y: 35, size: 24 },
-        { id: 8, color: '#FDE047', x: 78, y: 38, size: 25 },
+      setHandleAngle(0);
+      // 뽑기가 끝나면 랜덤 색상의 배출 캡슐 설정
+      const colors: CapsuleColor[] = ['mint', 'yellow', 'pink', 'blue', 'purple', 'orange', 'red'];
+      setDroppedCapsuleColor(colors[Math.floor(Math.random() * colors.length)]);
+
+      // 기본 안정 위치로 원복
+      setCapsules([
+        { id: 1, color: 'mint', x: 26, y: 72, size: 36, rotation: -15 },
+        { id: 2, color: 'yellow', x: 50, y: 76, size: 36, rotation: 10 },
+        { id: 3, color: 'blue', x: 74, y: 70, size: 36, rotation: 25 },
+        { id: 4, color: 'pink', x: 38, y: 52, size: 36, rotation: -35 },
+        { id: 5, color: 'purple', x: 62, y: 50, size: 36, rotation: 18 },
+        { id: 6, color: 'orange', x: 50, y: 32, size: 36, rotation: -12 },
+        { id: 7, color: 'red', x: 22, y: 40, size: 36, rotation: 40 },
+        { id: 8, color: 'mint', x: 78, y: 44, size: 36, rotation: -25 },
+        { id: 9, color: 'yellow', x: 32, y: 24, size: 34, rotation: 15 },
+        { id: 10, color: 'blue', x: 68, y: 26, size: 34, rotation: -20 },
       ]);
     }
+
     return () => {
-      if (interval) clearInterval(interval);
+      if (ballInterval) clearInterval(ballInterval);
+      if (handleInterval) clearInterval(handleInterval);
     };
   }, [isDrawing]);
 
-  const handleDrawClick = () => {
+  const handleAction = () => {
     if (isDrawing || disabled) return;
     sound.playClick();
     onDraw();
   };
 
   return (
-    <div className="flex flex-col items-center select-none w-full max-w-[340px] sm:max-w-[380px] mx-auto">
-      {/* 뽑기 기계 바디 */}
+    <div className="flex flex-col items-center select-none w-full max-w-[390px] sm:max-w-[430px] mx-auto">
+      {/* 1. 기계 지붕: 100% 8-비트 픽셀 차양 어닝 (Pixel Awning) */}
+      <div className="w-[94%] relative z-10 flex flex-col items-center">
+        {/* 상단 픽셀 배너 */}
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-[#134E48] text-white border-3 border-[#134E48] rounded-t-xl shadow-[3px_0px_0px_#0A2926]">
+          <PixelClover size={14} color="#34D399" />
+          <span className="font-['Press_Start_2P'] text-[9px] sm:text-[10px] tracking-wider text-[#A7F3D0]">
+            ★ 8-BIT GACHAPON ★
+          </span>
+          <PixelStar size={14} color="#FDE047" />
+        </div>
+
+        {/* 픽셀 스트라이프 차양 판 (Pixel Scallop Roof) */}
+        <div className="w-full h-8 bg-[#2DD4BF] border-3 border-[#134E48] flex items-center justify-between px-1 shadow-[4px_4px_0px_#134E48]">
+          {[...Array(9)].map((_, i) => (
+            <div
+              key={i}
+              className={`w-8 h-full border-r-2 border-[#134E48] flex flex-col justify-between p-0.5 ${
+                i % 2 === 0 ? 'bg-[#5EEAD4]' : 'bg-[#F0FDF9]'
+              }`}
+            >
+              <div className="w-full h-1 bg-white/40" />
+              <div className="w-1.5 h-1.5 bg-[#134E48] self-center" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. 기계 본체 (Pixel Cabinet Body) */}
       <div
-        className={`w-full bg-[#FFE5EC] border-4 border-[#262438] rounded-2xl p-4 shadow-[6px_6px_0px_#262438] relative transition-transform duration-100 ${
+        className={`w-full bg-[#A7F3D0] border-4 border-[#134E48] rounded-2xl p-4 sm:p-5 shadow-[8px_8px_0px_#134E48] relative transition-transform duration-100 ${
           isDrawing ? 'animate-pixel-shake' : ''
         }`}
       >
-        {/* 기계 상단 루프 / 장식 네온바 */}
-        <div className="flex items-center justify-between bg-[#FFFDF7] border-2 border-[#262438] px-3 py-1.5 rounded-lg mb-3 shadow-[2px_2px_0px_#262438]">
+        {/* 상단 픽셀 전광판 (Pixel Marquee) */}
+        <div className="bg-[#134E48] border-3 border-[#092B28] px-3 py-2 rounded-xl mb-3.5 shadow-inner flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#FF6B8B] border border-[#262438] animate-pixel-blink" />
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#FACC15] border border-[#262438] animate-pixel-blink delay-75" />
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#34D399] border border-[#262438] animate-pixel-blink delay-150" />
+            <span className="w-2.5 h-2.5 bg-[#FDE047] border border-black animate-pixel-blink" />
+            <span className="w-2.5 h-2.5 bg-[#34D399] border border-black animate-pixel-blink delay-75" />
+            <span className="w-2.5 h-2.5 bg-[#38BDF8] border border-black animate-pixel-blink delay-150" />
           </div>
-          <div className="flex items-center gap-1 text-[11px] font-bold text-[#832A44] tracking-wider">
-            <PixelStar size={14} color="#F59E0B" />
-            <span>LUCKY GACHA</span>
-            <PixelHeart size={12} color="#FF6B8B" />
+          <div className="font-['Press_Start_2P'] text-[10px] sm:text-[11px] text-[#A7F3D0] tracking-widest font-bold">
+            MINT GACHA 50
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#38BDF8] border border-[#262438] animate-pixel-blink" />
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#C084FC] border border-[#262438] animate-pixel-blink delay-75" />
+            <span className="w-2.5 h-2.5 bg-[#F43F5E] border border-black animate-pixel-blink" />
+            <span className="w-2.5 h-2.5 bg-[#FDE047] border border-black animate-pixel-blink delay-75" />
+            <span className="w-2.5 h-2.5 bg-[#10B981] border border-black animate-pixel-blink delay-150" />
           </div>
         </div>
 
-        {/* 투명 캡슐 돔 챔버 */}
-        <div className="relative w-full h-[180px] sm:h-[200px] bg-gradient-to-b from-[#F0FDFA] to-[#E0F2FE] border-4 border-[#262438] rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
-          {/* 유리 빛 반사 하이라이트 */}
-          <div className="absolute top-2 left-3 w-12 h-6 bg-white/70 rounded-full blur-[1px] rotate-[-20deg] pointer-events-none" />
-          <div className="absolute top-8 left-4 w-4 h-3 bg-white/60 rounded-full blur-[0.5px] rotate-[-20deg] pointer-events-none" />
+        {/* 3. 투명 유리 돔 챔버 (Crystal Capsule Chamber) */}
+        <div className="relative w-full h-[220px] sm:h-[245px] bg-gradient-to-b from-[#E6FFFA] via-[#D1FAE5] to-[#A7F3D0] border-4 border-[#134E48] rounded-2xl overflow-hidden shadow-inner flex items-center justify-center">
+          {/* 픽셀 격자망 오버레이 */}
+          <div className="absolute inset-0 pixel-grid-overlay opacity-30 pointer-events-none" />
 
-          {/* 챔버 내부 중앙 레트로 안내 마크 */}
-          <div className="absolute text-center opacity-25 pointer-events-none">
-            <span className="text-2xl font-bold tracking-widest text-[#262438]">★ 50 TICKETS ★</span>
+          {/* 유리 돔 픽셀 하이라이트 (Pixel Glints) */}
+          <div className="absolute top-2 left-3 w-16 h-8 bg-white/75 rounded-full blur-[1px] rotate-[-25deg] pointer-events-none" />
+          <div className="absolute top-10 left-5 w-5 h-4 bg-white/60 rounded-full blur-[0.5px] rotate-[-25deg] pointer-events-none" />
+
+          {/* 챔버 내부 중앙 기계식 회전축 교반봉 (Pixel Rotor Paddle) */}
+          <div className="absolute w-5 h-full bg-[#134E48]/20 border-x-2 border-[#134E48]/35 flex flex-col items-center justify-around pointer-events-none">
+            <div className="w-8 h-2.5 bg-[#134E48]/40 border border-[#134E48]" />
+            <div className="w-8 h-2.5 bg-[#134E48]/40 border border-[#134E48]" />
+            <div className="w-8 h-2.5 bg-[#134E48]/40 border border-[#134E48]" />
           </div>
 
-          {/* 캡슐 볼들 */}
-          {balls.map((ball) => (
+          {/* 배경 워터마크 안내 */}
+          <div className="absolute text-center opacity-20 pointer-events-none select-none">
+            <span className="text-xl sm:text-2xl font-black font-['Press_Start_2P'] text-[#134E48] tracking-widest">
+              LUCKY 50
+            </span>
+          </div>
+
+          {/* 정교한 100% 8-비트 도트 캡슐통들 (Pixel Art Capsules Inside) */}
+          {capsules.map((cap) => (
             <div
-              key={ball.id}
-              className="absolute rounded-full border-2 border-[#262438] shadow-[1px_2px_0px_rgba(0,0,0,0.25)] transition-all duration-75 flex items-center justify-center overflow-hidden"
+              key={cap.id}
+              className="absolute transition-all duration-75 select-none"
               style={{
-                left: `${ball.x}%`,
-                top: `${ball.y}%`,
-                width: `${ball.size}px`,
-                height: `${ball.size}px`,
-                backgroundColor: ball.color,
+                left: `${cap.x}%`,
+                top: `${cap.y}%`,
                 transform: 'translate(-50%, -50%)',
               }}
             >
-              {/* 반쪽 뚜껑 효과 */}
-              <div className="w-full h-1/2 bg-white/40 absolute top-0 left-0 border-b border-[#262438]/40" />
-              <div className="w-1.5 h-1.5 bg-white/80 rounded-full absolute top-1 left-1.5" />
+              <PixelCapsule
+                color={cap.color}
+                size={cap.size}
+                rotation={cap.rotation}
+                hasShine={true}
+              />
             </div>
           ))}
 
-          {/* 뽑는 중 소용돌이 이펙트 */}
+          {/* 뽑기 진행 시 회전 이펙트 텍스트 */}
           {isDrawing && (
-            <div className="absolute inset-0 bg-[#FFF5F7]/30 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-sm font-bold text-[#832A44] bg-[#FFFDF7] px-2.5 py-1 border-2 border-[#262438] shadow-[2px_2px_0px_#262438] animate-bounce">
-                두근두근 굴러가는 중...!
-              </span>
+            <div className="absolute inset-0 bg-[#E6FFFA]/50 backdrop-blur-[0.5px] flex flex-col items-center justify-center pointer-events-none animate-in fade-in">
+              <div className="bg-white border-3 border-[#134E48] px-3.5 py-1.5 rounded-xl shadow-[3px_3px_0px_#134E48] flex items-center gap-1.5 animate-bounce">
+                <PixelClover size={16} color="#059669" />
+                <span className="text-xs sm:text-sm font-black text-[#0D9488]">
+                  도트 캡슐 굴러가는 중...!
+                </span>
+                <PixelStar size={16} color="#F59E0B" />
+              </div>
             </div>
           )}
         </div>
 
-        {/* 기계 하단 컨트롤 패널 & 코인 슬롯 & 레버 */}
-        <div className="mt-3 bg-[#FFFDF7] border-3 border-[#262438] rounded-xl p-3 shadow-[3px_3px_0px_#262438]">
-          <div className="flex items-center justify-between gap-2">
-            {/* 코인 투입구 장식 */}
-            <div className="flex items-center gap-1.5 bg-[#FFF0F4] border-2 border-[#262438] px-2.5 py-1 rounded-md">
-              <PixelCoin size={18} />
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] text-slate-500 font-bold leading-none">COST</span>
-                <span className="text-xs font-bold text-[#FF5A8D] leading-none">FREE!</span>
+        {/* 4. 기계 하단 컨트롤 패널: 메카니컬 크랭크 다이얼 + 코인 슬롯 + 디지털 카운터 */}
+        <div className="mt-3.5 bg-[#F0FDF9] border-3 border-[#134E48] rounded-xl p-3 shadow-[4px_4px_0px_#134E48]">
+          <div className="grid grid-cols-12 gap-2.5 items-center">
+            {/* 왼쪽: 픽셀 메탈 코인 슬롯 */}
+            <div className="col-span-3 bg-[#CCFBF1] border-2 border-[#134E48] rounded-lg p-1.5 flex flex-col items-center justify-center text-center shadow-[1px_1px_0px_#134E48]">
+              <div className="w-7 h-1.5 bg-[#134E48] rounded-full mb-1" />
+              <div className="flex items-center gap-0.5">
+                <PixelCoin size={14} />
+                <span className="text-[9px] font-bold text-[#065F46] leading-none">FREE</span>
               </div>
             </div>
 
-            {/* 상태 디스플레이 창 */}
-            <div className="flex-1 bg-[#262438] border-2 border-[#191826] px-2.5 py-1.5 rounded-md text-center">
-              <span
-                className={`text-[11px] font-mono tracking-wider font-bold ${
-                  isDrawing ? 'text-[#FDE047] animate-pulse' : 'text-[#34D399]'
-                }`}
+            {/* 중앙: 100% 8-비트 회전 크랭크 레버 (Interactive Pixel Crank Dial) */}
+            <div className="col-span-5 flex flex-col items-center justify-center">
+              <button
+                onClick={handleAction}
+                disabled={isDrawing || disabled}
+                className="group relative cursor-pointer focus:outline-none transition-transform active:scale-95"
+                title="레버를 클릭해 돌려보세요!"
+                aria-label="뽑기 레버 돌리기"
               >
-                {isDrawing ? 'ROLLING...' : 'READY!'}
+                <PixelCrankDial
+                  size={66}
+                  rotation={handleAngle}
+                  className="filter drop-shadow-[2px_2px_0px_#0A2926]"
+                />
+              </button>
+              <span className="text-[10px] font-bold text-[#0D9488] mt-1 font-mono tracking-tight">
+                {isDrawing ? 'SPINNING!' : 'TURN LEVER'}
               </span>
             </div>
 
-            {/* 픽셀 장식 하트 */}
-            <div className="p-1.5 bg-[#FEF3C7] border-2 border-[#262438] rounded-md flex items-center justify-center">
-              <PixelHeart size={16} color="#FF5A8D" />
+            {/* 오른쪽: 도트 매트릭스 LED 50개 확률 리셋 표시창 */}
+            <div className="col-span-4 bg-[#134E48] border-2 border-[#092724] rounded-lg p-2 text-center shadow-inner flex flex-col justify-center">
+              <span className="text-[8px] sm:text-[9px] font-bold text-[#5EEAD4] font-mono leading-none">
+                POOL ODDS
+              </span>
+              <span className="text-xs sm:text-sm font-black font-mono text-[#34D399] tracking-wider mt-0.5 leading-tight">
+                {isDrawing ? 'ROLLING' : 'RESET 50'}
+              </span>
             </div>
           </div>
 
-          {/* 배출구 (캡슐이 쏙 나오는 곳) */}
-          <div className="mt-2.5 pt-2 border-t-2 border-dashed border-[#262438]/20 flex items-center justify-center">
-            <div className="w-24 h-9 bg-[#262438] border-2 border-[#191826] rounded-md relative flex items-center justify-center overflow-hidden">
-              <div className="w-20 h-2 bg-[#12111D] rounded-full mx-auto" />
+          {/* 5. 캡슐 배출구 트레이 & PUSH 플랩 도어 */}
+          <div className="mt-3 pt-2.5 border-t-2 border-dashed border-[#134E48]/25 flex items-center justify-center">
+            <div className="w-36 h-12 bg-[#134E48] border-3 border-[#092825] rounded-lg relative flex items-center justify-center overflow-hidden shadow-inner">
+              {/* 투명 푸시 플랩 도어 */}
+              <div className="w-28 h-5 bg-[#34D399]/30 border-2 border-[#34D399] rounded-xs flex items-center justify-center">
+                <span className="text-[8px] font-bold text-white tracking-widest font-mono">
+                  PUSH FLAP
+                </span>
+              </div>
+              {/* 배출구로 굴러나온 8비트 캡슐통 */}
+              {droppedCapsuleColor && !isDrawing && (
+                <div className="absolute top-1 animate-in zoom-in-75 duration-150">
+                  <PixelCapsule
+                    color={droppedCapsuleColor}
+                    size={28}
+                    rotation={15}
+                    hasShine={true}
+                  />
+                </div>
+              )}
               {isDrawing && (
-                <div className="absolute w-6 h-6 rounded-full bg-[#FF8DA1] border border-white animate-pixel-bounce top-1" />
+                <div className="absolute top-1 animate-pixel-bounce">
+                  <PixelCapsule
+                    color="mint"
+                    size={28}
+                    rotation={handleAngle}
+                    hasShine={true}
+                  />
+                </div>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* 대망의 메인 '뽑기!' 버튼 */}
-      <div className="w-full mt-4 flex flex-col items-center">
+      {/* 3. 대형 민트 '뽑기!' 버튼 (Big 8-Bit Arcade Push Button) */}
+      <div className="w-full mt-5 flex flex-col items-center">
         <button
-          onClick={handleDrawClick}
+          onClick={handleAction}
           disabled={isDrawing || disabled}
-          className="pixel-btn pixel-draw-btn w-full py-3.5 sm:py-4 px-6 rounded-xl text-lg sm:text-xl font-black cursor-pointer tracking-wider relative overflow-hidden"
+          className="pixel-btn pixel-draw-btn w-full py-4 sm:py-4.5 px-6 rounded-2xl text-xl sm:text-2xl font-black cursor-pointer tracking-wider relative overflow-hidden"
           aria-label="행운의 티켓 뽑기"
         >
-          <div className="flex items-center justify-center gap-2">
-            <PixelStar size={20} color="#FEF08A" />
+          <div className="flex items-center justify-center gap-2.5">
+            <PixelClover size={22} color="#FEF08A" />
             <span>{isDrawing ? '뽑는 중...' : '뽑기!'}</span>
-            <PixelStar size={20} color="#FEF08A" />
+            <PixelStar size={22} color="#FEF08A" />
           </div>
-          {/* 반짝임 하이라이트 */}
-          <div className="absolute top-1 left-3 right-3 h-1.5 bg-white/30 rounded-full pointer-events-none" />
+          {/* 상단 픽셀 반짝임 하이라이트 */}
+          <div className="absolute top-1 left-4 right-4 h-1.5 bg-white/35 rounded-full pointer-events-none" />
         </button>
 
-        <p className="mt-2 text-xs text-slate-500 text-center font-medium">
-          {isDrawing ? '어떤 행운이 나올까요?' : '버튼을 눌러 50개의 티켓 중 1개를 뽑아보세요!'}
+        <p className="mt-2 text-xs text-[#0F766E] text-center font-bold">
+          {isDrawing ? '어떤 행운이 나올까요?' : '버튼이나 레버를 눌러 50개의 티켓 중 1개를 뽑아보세요!'}
         </p>
       </div>
     </div>

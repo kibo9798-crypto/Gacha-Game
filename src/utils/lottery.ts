@@ -1,4 +1,4 @@
-import { DrawRecord, PrizeTier, Ticket, TicketItemConfig, VerificationResult } from '../types/draw';
+import { PrizeTier, Ticket, TicketItemConfig, VerificationResult } from '../types/draw';
 
 // 정확한 50개 티켓 규격 정의
 export const TICKET_CONFIGS: TicketItemConfig[] = [
@@ -133,16 +133,16 @@ export const TICKET_CONFIGS: TicketItemConfig[] = [
 export const TOTAL_TICKETS = 50;
 
 /**
- * 50개의 개별 티켓 생성 함수
+ * 50개의 개별 티켓 신규 생성 (매 뽑기마다 확률 100% 완전 초기화/리셋)
  */
-export function generateTicketPool(): Ticket[] {
+export function generateFreshTicketPool(): Ticket[] {
   const tickets: Ticket[] = [];
   let indexCounter = 1;
 
   for (const item of TICKET_CONFIGS) {
     for (let i = 0; i < item.count; i++) {
       tickets.push({
-        uid: `ticket-${item.id}-${i + 1}`,
+        uid: `ticket-${item.id}-${i + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         ticketIndex: indexCounter++,
         itemId: item.id,
         name: item.name,
@@ -155,7 +155,7 @@ export function generateTicketPool(): Ticket[] {
 }
 
 /**
- * 시작 시 티켓 총수 및 항목별 개수 무결성 검증
+ * 티켓 총수 및 항목별 개수 무결성 검증
  */
 export function verifyTicketPool(tickets: Ticket[]): VerificationResult {
   const errors: string[] = [];
@@ -189,25 +189,17 @@ export function verifyTicketPool(tickets: Ticket[]): VerificationResult {
   };
 }
 
-/**
- * 50개의 티켓 풀 (메모리 내 고정 레퍼런스 및 검증 완료된 풀)
- */
-export const GLOBAL_TICKET_POOL: Ticket[] = generateTicketPool();
-export const INITIAL_VERIFICATION: VerificationResult = verifyTicketPool(GLOBAL_TICKET_POOL);
-
-// 콘솔에 검증 결과 출력 (시작 시)
-if (!INITIAL_VERIFICATION.isValid) {
-  console.error('[포인트 뽑기 검증 실패]', INITIAL_VERIFICATION.errors);
-} else {
-  console.log('[포인트 뽑기 검증 완료] 총 50개 티켓 및 항목별 개수 일치 확인됨.');
-}
+export const INITIAL_VERIFICATION: VerificationResult = verifyTicketPool(generateFreshTicketPool());
 
 /**
- * 균등 무작위 추첨 (복원 추출 - 각 추첨은 독립적이며 중복 당첨 허용)
+ * 매번 뽑을 때마다 확률과 티켓 풀을 100% 새로 리셋하여 1장을 균등 무작위 추첨
  */
-export function drawRandomTicket(pool: Ticket[] = GLOBAL_TICKET_POOL): Ticket {
-  const randomIndex = Math.floor(Math.random() * pool.length);
-  return pool[randomIndex];
+export function drawWithFullReset(): Ticket {
+  // 1. 매 뽑기마다 50개 티켓 풀 새로 생성 & 리셋 (항목별 확률 100% 원복)
+  const freshPool = generateFreshTicketPool();
+  // 2. 50개 중 1개 균등 무작위 선택
+  const randomIndex = Math.floor(Math.random() * freshPool.length);
+  return freshPool[randomIndex];
 }
 
 /**
@@ -222,48 +214,21 @@ export function getItemConfig(itemId: string): TicketItemConfig {
 }
 
 /**
- * 로컬스토리지 키 상수
+ * 모든 과거 기록 완전 삭제 함수
  */
 export const STORAGE_KEYS = {
+  SOUND_ENABLED: 'point_draw_sound_v1',
   HISTORY: 'point_draw_history_v1',
   TOTAL_COUNT: 'point_draw_total_count_v1',
-  SOUND_ENABLED: 'point_draw_sound_v1',
 };
 
-export function loadSavedHistory(): DrawRecord[] {
+export function purgeSavedRecords(): void {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.HISTORY);
-    if (!raw) return [];
-    return JSON.parse(raw);
+    localStorage.removeItem(STORAGE_KEYS.HISTORY);
+    localStorage.removeItem(STORAGE_KEYS.TOTAL_COUNT);
+    localStorage.removeItem('point_draw_history');
+    localStorage.removeItem('point_draw_total_count');
   } catch (e) {
-    console.error('Failed to parse history from localStorage', e);
-    return [];
-  }
-}
-
-export function saveHistory(history: DrawRecord[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
-  } catch (e) {
-    console.error('Failed to save history to localStorage', e);
-  }
-}
-
-export function loadSavedTotalCount(): number {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.TOTAL_COUNT);
-    if (!raw) return 0;
-    const parsed = parseInt(raw, 10);
-    return isNaN(parsed) ? 0 : parsed;
-  } catch {
-    return 0;
-  }
-}
-
-export function saveTotalCount(count: number): void {
-  try {
-    localStorage.setItem(STORAGE_KEYS.TOTAL_COUNT, count.toString());
-  } catch (e) {
-    console.error('Failed to save count to localStorage', e);
+    console.error('Failed to purge records', e);
   }
 }

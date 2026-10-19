@@ -1,53 +1,68 @@
 import React from 'react';
-import { PixelHeart, PixelStar } from './PixelIcons';
+import { PixelCloud, PixelClover, PixelCoin, PixelHeart, PixelStar } from './PixelIcons';
 
 export const PixelDecorations: React.FC = () => {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
-      {/* 좌상단 별 & 하트 */}
-      <div className="absolute top-6 left-6 animate-pixel-float hidden sm:block">
-        <PixelStar size={24} color="#FDE047" />
+      {/* 1. 도트 매트릭스 배경 패턴 */}
+      <div className="absolute inset-0 retro-dot-bg opacity-90" />
+      <div className="absolute inset-0 pixel-grid-overlay" />
+
+      {/* 2. 도트 구름 (상단 하늘 연출) */}
+      <div className="absolute top-4 left-[8%] animate-pixel-float hidden sm:block opacity-75">
+        <PixelCloud size={70} color="#99F6E4" />
       </div>
-      <div className="absolute top-24 left-16 animate-pixel-bounce hidden md:block">
-        <PixelHeart size={20} color="#FFCCD9" />
+      <div className="absolute top-12 right-[12%] animate-pixel-float delay-150 hidden md:block opacity-65">
+        <PixelCloud size={60} color="#A7F3D0" />
       </div>
-      <div className="absolute top-44 left-8 animate-pixel-float delay-100 hidden lg:block">
-        <PixelStar size={16} color="#BAF2DF" />
+      <div className="absolute top-28 left-[4%] animate-pixel-bounce delay-100 hidden lg:block opacity-50">
+        <PixelCloud size={48} color="#CCFBF1" />
       </div>
 
-      {/* 우상단 별 & 하트 */}
-      <div className="absolute top-8 right-8 animate-pixel-float delay-75 hidden sm:block">
-        <PixelHeart size={26} color="#FF8DA1" />
+      {/* 3. 좌상단 도트 오브젝트들 (네잎클로버 & 코인 & 별) */}
+      <div className="absolute top-16 left-8 animate-pixel-bounce hidden sm:block">
+        <PixelClover size={24} color="#10B981" />
       </div>
-      <div className="absolute top-28 right-16 animate-pixel-bounce delay-150 hidden md:block">
-        <PixelStar size={22} color="#FEF08A" />
+      <div className="absolute top-36 left-16 animate-pixel-float hidden md:block">
+        <PixelCoin size={22} />
       </div>
-      <div className="absolute top-52 right-10 animate-pixel-float hidden lg:block">
-        <PixelStar size={18} color="#93C5FD" />
-      </div>
-
-      {/* 좌하단 */}
-      <div className="absolute bottom-16 left-10 animate-pixel-bounce delay-75 hidden md:block">
-        <PixelStar size={22} color="#FDE047" />
-      </div>
-      <div className="absolute bottom-32 left-20 animate-pixel-float hidden lg:block">
-        <PixelHeart size={18} color="#FFCCD9" />
+      <div className="absolute top-56 left-6 animate-pixel-float delay-100 hidden lg:block">
+        <PixelStar size={18} color="#2DD4BF" />
       </div>
 
-      {/* 우하단 */}
-      <div className="absolute bottom-20 right-12 animate-pixel-float delay-150 hidden md:block">
-        <PixelHeart size={22} color="#FF8DA1" />
+      {/* 4. 우상단 도트 오브젝트들 (클로버 & 하트 & 별) */}
+      <div className="absolute top-16 right-8 animate-pixel-float delay-75 hidden sm:block">
+        <PixelClover size={26} color="#059669" />
       </div>
-      <div className="absolute bottom-36 right-24 animate-pixel-bounce hidden lg:block">
-        <PixelStar size={16} color="#BAF2DF" />
+      <div className="absolute top-36 right-16 animate-pixel-bounce delay-150 hidden md:block">
+        <PixelHeart size={20} color="#34D399" />
+      </div>
+      <div className="absolute top-56 right-10 animate-pixel-float hidden lg:block">
+        <PixelStar size={20} color="#FDE047" />
       </div>
 
-      {/* 모바일용 은은한 장식 2개 */}
-      <div className="absolute top-4 right-4 sm:hidden animate-pixel-float opacity-70">
-        <PixelStar size={16} color="#FDE047" />
+      {/* 5. 좌하단 도트 오브젝트들 */}
+      <div className="absolute bottom-20 left-10 animate-pixel-bounce delay-75 hidden md:block">
+        <PixelStar size={24} color="#5EEAD4" />
       </div>
-      <div className="absolute top-12 left-3 sm:hidden animate-pixel-bounce opacity-70">
-        <PixelHeart size={16} color="#FF8DA1" />
+      <div className="absolute bottom-40 left-20 animate-pixel-float hidden lg:block">
+        <PixelClover size={22} color="#10B981" />
+      </div>
+
+      {/* 6. 우하단 도트 오브젝트들 */}
+      <div className="absolute bottom-24 right-12 animate-pixel-float delay-150 hidden md:block">
+        <PixelCoin size={24} />
+      </div>
+      <div className="absolute bottom-44 right-20 animate-pixel-bounce hidden lg:block">
+        <PixelClover size={20} color="#059669" />
+      </div>
+
+      {/* 7. 모바일 전용 은은한 상단 도트 장식 */}
+      <div className="absolute top-3 right-4 sm:hidden animate-pixel-float opacity-80">
+        <PixelClover size={18} color="#10B981" />
+      </div>
+      <div className="absolute top-10 left-3 sm:hidden animate-pixel-bounce opacity-80">
+        <PixelStar size={16} color="#2DD4BF" />
       </div>
     </div>
   );

@@ -54,6 +54,57 @@ export const PixelHeart: React.FC<{ size?: number; color?: string; className?: s
   </svg>
 );
 
+// 8-bit Pixel Clover (행운의 네잎클로버)
+export const PixelClover: React.FC<{ size?: number; color?: string; className?: string }> = ({
+  size = 20,
+  color = '#10B981',
+  className = '',
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`shrink-0 ${className}`}
+    style={{ imageRendering: 'pixelated' }}
+  >
+    <rect x="3" y="1" width="3" height="3" fill={color} />
+    <rect x="10" y="1" width="3" height="3" fill={color} />
+    <rect x="2" y="3" width="5" height="3" fill={color} />
+    <rect x="9" y="3" width="5" height="3" fill={color} />
+    <rect x="1" y="8" width="4" height="4" fill={color} />
+    <rect x="11" y="8" width="4" height="4" fill={color} />
+    <rect x="3" y="10" width="4" height="3" fill={color} />
+    <rect x="9" y="10" width="4" height="3" fill={color} />
+    <rect x="5" y="5" width="6" height="6" fill="#34D399" />
+    <rect x="7" y="11" width="2" height="4" fill="#047857" />
+    <rect x="8" y="14" width="2" height="1" fill="#047857" />
+  </svg>
+);
+
+// 8-bit Pixel Cloud
+export const PixelCloud: React.FC<{ size?: number; color?: string; className?: string }> = ({
+  size = 32,
+  color = '#CCFBF1',
+  className = '',
+}) => (
+  <svg
+    width={size}
+    height={size * 0.6}
+    viewBox="0 0 20 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`shrink-0 ${className}`}
+    style={{ imageRendering: 'pixelated' }}
+  >
+    <rect x="5" y="1" width="6" height="2" fill={color} />
+    <rect x="3" y="3" width="12" height="2" fill={color} />
+    <rect x="1" y="5" width="17" height="4" fill={color} />
+    <rect x="2" y="9" width="15" height="2" fill={color} />
+  </svg>
+);
+
 // 8-bit Coin
 export const PixelCoin: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => (
   <svg
@@ -328,3 +379,69 @@ export const ItemPixelIcon: React.FC<{ itemId: string; size?: number; className?
       return <PixelStar size={size} />;
   }
 };
+
+// 8-bit Pixel Rotary Crank Dial (아케이드 뽑기 회전 손잡이)
+export const PixelCrankDial: React.FC<{ size?: number; rotation?: number; className?: string }> = ({
+  size = 64,
+  rotation = 0,
+  className = '',
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`shrink-0 ${className}`}
+    style={{
+      imageRendering: 'pixelated',
+      transform: `rotate(${rotation}deg)`,
+      transformOrigin: 'center center',
+    }}
+  >
+    {/* 바깥 원형 계단 외곽선 */}
+    <rect x="11" y="1" width="10" height="2" fill="#134E48" />
+    <rect x="7" y="3" width="4" height="2" fill="#134E48" />
+    <rect x="21" y="3" width="4" height="2" fill="#134E48" />
+    <rect x="4" y="5" width="3" height="2" fill="#134E48" />
+    <rect x="25" y="5" width="3" height="2" fill="#134E48" />
+    <rect x="2" y="7" width="2" height="4" fill="#134E48" />
+    <rect x="28" y="7" width="2" height="4" fill="#134E48" />
+    <rect x="1" y="11" width="2" height="10" fill="#134E48" />
+    <rect x="29" y="11" width="2" height="10" fill="#134E48" />
+    <rect x="2" y="21" width="2" height="4" fill="#134E48" />
+    <rect x="28" y="21" width="2" height="4" fill="#134E48" />
+    <rect x="4" y="25" width="3" height="2" fill="#134E48" />
+    <rect x="25" y="25" width="3" height="2" fill="#134E48" />
+    <rect x="7" y="27" width="4" height="2" fill="#134E48" />
+    <rect x="21" y="27" width="4" height="2" fill="#134E48" />
+    <rect x="11" y="29" width="10" height="2" fill="#134E48" />
+
+    {/* 베젤 링 (골드 & 실버 메탈) */}
+    <rect x="11" y="3" width="10" height="2" fill="#FDE047" />
+    <rect x="7" y="5" width="18" height="2" fill="#FDE047" />
+    <rect x="5" y="7" width="22" height="18" fill="#FACC15" />
+    <rect x="7" y="25" width="18" height="2" fill="#CA8A04" />
+    <rect x="11" y="27" width="10" height="2" fill="#A16207" />
+
+    {/* 내부 기어 링 */}
+    <rect x="9" y="9" width="14" height="14" fill="#E2E8F0" />
+    <rect x="8" y="11" width="16" height="10" fill="#E2E8F0" />
+    <rect x="11" y="8" width="10" height="16" fill="#E2E8F0" />
+
+    {/* 회전 크랭크 바 (가로 직사각형 손잡이) */}
+    <rect x="4" y="13" width="24" height="6" fill="#134E48" />
+    <rect x="5" y="14" width="22" height="4" fill="#0D9488" />
+    <rect x="6" y="14" width="20" height="2" fill="#2DD4BF" />
+    {/* 크랭크 양 끝 픽셀 볼트 */}
+    <rect x="6" y="15" width="2" height="2" fill="#FFFFFF" />
+    <rect x="24" y="15" width="2" height="2" fill="#FFFFFF" />
+
+    {/* 센터 원형 클로버 볼트 */}
+    <rect x="12" y="12" width="8" height="8" fill="#134E48" />
+    <rect x="13" y="13" width="6" height="6" fill="#10B981" />
+    <rect x="14" y="14" width="4" height="4" fill="#34D399" />
+    <rect x="15" y="15" width="2" height="2" fill="#FFFFFF" />
+  </svg>
+);
+

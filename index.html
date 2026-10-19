@@ -17,7 +17,28 @@
   </head>
   <body class="bg-[#E6F7F2] text-[#134E48] antialiased select-none">
     <div id="root"></div>
+
+    <!-- 1. Vite Development Server Entry (for AI Studio development) -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- 2. GitHub Pages Direct Deployment Fallback Loader -->
+    <script type="module">
+      const isGitHubPages = window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
+      if (isGitHubPages) {
+        // Load compiled production stylesheet
+        if (!document.querySelector('link[href*="index.css"]')) {
+          const css = document.createElement('link');
+          css.rel = 'stylesheet';
+          css.href = './assets/index.css';
+          document.head.appendChild(css);
+        }
+
+        // Dynamically load compiled production JS bundle
+        const bundlePath = './assets/' + 'index.js';
+        import(/* @vite-ignore */ bundlePath).catch((err) => {
+          console.error('Failed to load GitHub Pages bundle:', err);
+        });
+      }
+    </script>
   </body>
 </html>
-
